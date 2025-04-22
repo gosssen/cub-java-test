@@ -1,1 +1,6 @@
 com/goss/cubjavatest/CubJavaTestApplication.class
+com/goss/cubjavatest/service/impl/CoinDeskServiceImpl.class
+com/goss/cubjavatest/service/CoinDeskService.class
+com/goss/cubjavatest/entity/Currency.class
+com/goss/cubjavatest/repository/CurrencyRepository.class
+com/goss/cubjavatest/controller/CurrencyController.class

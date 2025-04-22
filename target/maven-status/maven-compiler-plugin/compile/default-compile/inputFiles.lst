@@ -1,1 +1,6 @@
 /Users/goss/IdeaProjects/cub-java-test/src/main/java/com/goss/cubjavatest/CubJavaTestApplication.java
+/Users/goss/IdeaProjects/cub-java-test/src/main/java/com/goss/cubjavatest/service/CoinDeskService.java
+/Users/goss/IdeaProjects/cub-java-test/src/main/java/com/goss/cubjavatest/repository/CurrencyRepository.java
+/Users/goss/IdeaProjects/cub-java-test/src/main/java/com/goss/cubjavatest/entity/Currency.java
+/Users/goss/IdeaProjects/cub-java-test/src/main/java/com/goss/cubjavatest/controller/CurrencyController.java
+/Users/goss/IdeaProjects/cub-java-test/src/main/java/com/goss/cubjavatest/service/impl/CoinDeskServiceImpl.java
