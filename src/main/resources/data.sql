@@ -1,5 +1,5 @@
-CREATE TABLE IF NOT EXISTS currency (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    currency_code VARCHAR(10) NOT NULL,
-    currency_name VARCHAR(100) NOT NULL
+CREATE TABLE IF NOT EXISTS currency_ref (
+    code CHAR(3) PRIMARY KEY,
+    name_zh VARCHAR(20),
+    name_en VARCHAR(100)
 );

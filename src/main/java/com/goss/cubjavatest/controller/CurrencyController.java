@@ -1,8 +1,10 @@
 package com.goss.cubjavatest.controller;
 
-import com.goss.cubjavatest.entity.Currency;
-import com.goss.cubjavatest.repository.CurrencyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.goss.cubjavatest.dto.CoinDeskDto;
+import com.goss.cubjavatest.entity.CurrencyRef;
+import com.goss.cubjavatest.service.CurrencyService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,47 +15,95 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/currencies")
+@Slf4j
+@RequiredArgsConstructor
 public class CurrencyController {
 
-  @Autowired
-  private CurrencyRepository currencyRepository;
+  private final CurrencyService currencyService;
 
-  // 查詢所有幣別
+  /**
+   * 查詢所有幣別的中英文名稱資料。
+   */
   @GetMapping
-  public List<Currency> getAllCurrencies() {
-    return currencyRepository.findAll();
+  public ResponseEntity<List<CurrencyRef>> getAllCurrencyRef() {
+    return ResponseEntity.ok(currencyService.getAllCurrencyRef());
   }
 
-  // 查詢單一幣別
-  @GetMapping("/{id}")
-  public ResponseEntity<Currency> getCurrencyById(@PathVariable Long id) {
-    Optional<Currency> currency = currencyRepository.findById(id);
-    return currency.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+  /**
+   * 查詢一筆幣別的中英文名稱資料。
+   */
+  @GetMapping("/{code}")
+  public ResponseEntity<CurrencyRef> getCurrencyRefByCode(@PathVariable String code) {
+    Optional<CurrencyRef> currency = currencyService.getCurrencyRefByCode(code);
+    return currency.map(ResponseEntity::ok)
+            .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  // 新增幣別
+  /**
+   * 新增一筆幣別的中英文名稱資料。
+   */
   @PostMapping
-  public ResponseEntity<Currency> createCurrency(@RequestBody Currency currency) {
-    return new ResponseEntity<>(currencyRepository.save(currency), HttpStatus.CREATED);
+  public ResponseEntity<?> createCurrencyRef(@RequestBody CurrencyRef currency) {
+    if (currency.getCode() == null || currency.getCode().trim().isEmpty()) {
+      return ResponseEntity.badRequest().body("Currency code is required.");
+    }
+
+    String upperCode = currency.getCode().toUpperCase();
+    currency.setCode(upperCode);
+
+    if (currencyService.existsByCurrencyRefCode(upperCode)) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body("The Currency code already exists.");
+    }
+
+    return new ResponseEntity<>(currencyService.saveCurrencyRef(currency), HttpStatus.CREATED);
   }
 
-  // 修改幣別
-  @PutMapping("/{id}")
-  public ResponseEntity<Currency> updateCurrency(@PathVariable Long id, @RequestBody Currency currency) {
-    if (!currencyRepository.existsById(id)) {
+  /**
+   * 更新指定幣別的中英文名稱資料。
+   */
+  @PutMapping("/{code}")
+  public ResponseEntity<CurrencyRef> updateCurrencyRef(@PathVariable String code, @RequestBody CurrencyRef currency) {
+    if (code == null || code.trim().isEmpty()) {
+      return ResponseEntity.badRequest().build();
+    }
+
+    String upperCode = code.toUpperCase();
+
+    if (!currencyService.existsByCurrencyRefCode(upperCode)) {
       return ResponseEntity.notFound().build();
     }
-    currency.setId(id);
-    return ResponseEntity.ok(currencyRepository.save(currency));
+
+    currency.setCode(upperCode);
+    return ResponseEntity.ok(currencyService.saveCurrencyRef(currency));
   }
 
-  // 刪除幣別
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Void> deleteCurrency(@PathVariable Long id) {
-    if (!currencyRepository.existsById(id)) {
+  /**
+   * 刪除指定幣別的中英文名稱資料。
+   */
+  @DeleteMapping("/{code}")
+  public ResponseEntity<Void> deleteCurrencyRef(@PathVariable String code) {
+    String upperCode = code.toUpperCase();
+
+    if (!currencyService.existsByCurrencyRefCode(upperCode)) {
       return ResponseEntity.notFound().build();
     }
-    currencyRepository.deleteById(id);
+
+    currencyService.deleteCurrencyRef(upperCode);
     return ResponseEntity.noContent().build();
   }
+
+  /**
+   * 手動同步幣別中英文名稱資料
+   */
+  @PostMapping("/sync")
+  public ResponseEntity<String> syncCurrencyRef() {
+    currencyService.syncCurrencyRef();
+    return ResponseEntity.ok("Currency reference data synced successfully.");
+  }
+
+  @GetMapping("/coindesk-data")
+  public CoinDeskDto getCoinDeskData() {
+    return currencyService.getCoinDeskData();
+  }
+
 }
