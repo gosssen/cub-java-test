@@ -5,7 +5,7 @@ import com.goss.cubjavatest.dto.CurrencyInfo;
 import com.goss.cubjavatest.entity.CurrencyRef;
 import com.goss.cubjavatest.external.coindesk.Bpi;
 import com.goss.cubjavatest.external.coindesk.CoinDeskResponse;
-import com.goss.cubjavatest.external.coindesk.CoindeskClient;
+import com.goss.cubjavatest.external.coindesk.CoinDeskClient;
 import com.goss.cubjavatest.external.opencube.Currency;
 import com.goss.cubjavatest.external.opencube.CurrencyResponse;
 import com.goss.cubjavatest.external.opencube.OpenCubeClient;
@@ -32,7 +32,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
   private final CurrencyRefRepository currencyRefRepository;
   private final OpenCubeClient openCubeClient;
-  private final CoindeskClient coindeskClient;
+  private final CoinDeskClient coindeskClient;
 
   @PostConstruct
   public void init() {
@@ -99,6 +99,8 @@ public class CurrencyServiceImpl implements CurrencyService {
     if (coinDeskData == null || coinDeskData.getTime() == null || coinDeskData.getBpi() == null) {
       throw new IllegalStateException("Coindesk respones is null or empty.");
     }
+
+    log.info("CoinDesk API Response: {}", coinDeskData);
 
     String updateTime = formatUpdateTime(coinDeskData.getTime().getUpdatedISO());
 
