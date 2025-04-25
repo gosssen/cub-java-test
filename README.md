@@ -42,3 +42,31 @@
 2. 測試呼叫幣別對應表資料 CRUD API，並顯示其內容。
 3. 測試呼叫 coindesk API，並顯示其內容。
 4. 測試呼叫資料轉換的 API，並顯示其內容。
+
+---
+
+## 🧑‍💻 專案結構
+- src/main/java: 包含核心業務邏輯與 API 實作
+- src/main/resources: 存放設定檔、資料庫初始化腳本等
+- src/test/java: 單元測試與整合測試
+
+---
+
+## 📝 API 端點範例
+
+1. 幣別資料 CRUD API
+- GET /api/currencies: 查詢所有幣別
+```
+curl -X GET http://localhost:8080/api/currencies
+```
+
+- POST /api/currencies: 新增幣別資料
+```
+curl -X POST http://localhost:8080/api/currencies -H "Content-Type: application/json" -d '{"code": "USD", "nameZh": "美元", "nameEn": "US Dollar"}'
+```
+
+2. Coindesk API 數據
+- GET /api/currencies/coindesk-data: 查詢 Coindesk 資料
+```
+curl -X GET http://localhost:8080/api/currencies/coindesk-data
+```
